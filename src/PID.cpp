@@ -28,6 +28,7 @@ void PID::Init(double kp, double ki, double kd) {
   ping_pong = 1;
   err = 0;
   best_err = 0;
+  sumdp = 0;
 }
 
 void PID::UpdateError(double cte) {
@@ -40,7 +41,7 @@ void PID::UpdateParams() {
   Kp = p[0];
   Ki = p[1];
   Kd = p[2];
-  cout << "******** params = " << p[0] << ", " << p[1] << ", " << p[2] << endl;
+  cout << "******** sumdp = " << sumdp << " params = " << p[0] << ", " << p[1] << ", " << p[2] << endl;
 }
 
 double PID::TotalError() {

@@ -33,7 +33,9 @@ int main()
   uWS::Hub h;
 
   PID pid;
-  pid.Init(0.05,0.005,0.9);
+  pid.Init(0.20,0.0012,0.8);
+  //pid.Init(0.25,0.0012,0.8);
+	//pid.Init(0.208724, 0.00166979, 0.667917);
   //pid.Init(0, 0, 0);
 
   h.onMessage([&pid](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, uWS::OpCode opCode) {
@@ -52,18 +54,23 @@ int main()
           double speed = std::stod(j[1]["speed"].get<std::string>());
           double angle = std::stod(j[1]["steering_angle"].get<std::string>());
           double steer_value;
+					const int twiddle_start = 2;
+					double tolerance = 21;
           /*
-          * TODO: Calcuate steering value here, remember the steering value is
+          * Calcuate steering value here, remember the steering value is
           * [-1, 1].
           * NOTE: Feel free to play around with the throttle and speed. Maybe use
           * another PID controller to control the speed!
           */
 
           pid.iter++;
-					if(pid.iter >= 100) {
-        		if(pid.iter == 100) {
+					if(pid.iter >= twiddle_start) {
+        		if(pid.iter == twiddle_start) {
 							// Initialize for best error
         		  pid.best_err = pid.TotalError();
+							pid.dp[0] = pid.Kp;
+							pid.dp[1] = pid.Ki;
+							pid.dp[2] = pid.Kd;
         		} else {
         		  if(pid.ping_pong) {
 								pid.ping_pong = 1;
@@ -100,7 +107,16 @@ int main()
 									}
 								}
 							}
-							pid.UpdateParams();
+        			for(int i=0; i < 3; i++) {
+								pid.sumdp += pid.dp[i];
+							}
+							// Update Kp, Ki, Kd with new values
+							if(pid.sumdp > tolerance) { 
+								pid.UpdateParams();
+								pid.sumdp = 0;
+							} else {
+								std::cout <<"sumdp = " << pid.sumdp << std::endl;
+							}
 						}
 					}
 						

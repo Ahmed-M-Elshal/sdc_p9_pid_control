@@ -20,11 +20,11 @@ public:
   int iter;
   double p[3];
   double dp[3];
-  
+  double sumdp;
   double err;
   double best_err;
   bool ping_pong;
-
+  
   /*
   * Constructor
   */
