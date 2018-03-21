@@ -51,7 +51,8 @@ public:
   double TotalError();
   
   void UpdateParams();
-  //void Twiddle();
+  double SteeringAngle();
+  void Twiddle();
 };
 
 #endif /* PID_H */

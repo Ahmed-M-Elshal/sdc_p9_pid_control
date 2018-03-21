@@ -30,4 +30,7 @@ After running for a bunch of iterations I noticed that the sumdp was settling on
 
 So I reduced the i component of the controller and with start value of the params to [0.20,0.0012,0.8] I was able to get the car to complete the lap (barely!!!). It starts out well and starts moving around a lot towards the end! So I reduced the start value of the d component furhter [0.18, 0.0012, 0.8] and after around 50 iterations the twiddle updates the final params [0.164206, 0.00109471, 0.729806]. Seems like the car is more stable now! 
 
+I realized the car was overshooting a bit so I changed the init params to [0.15, 0.0012, 0.8] and after running Twiddle is adjusted the params to [0.142228, 0.00113783, 0.758551]. I completed 2 laps with this!!!
 
+Attached is a link to the video:
+https://youtu.be/3jG3x5B3f2A

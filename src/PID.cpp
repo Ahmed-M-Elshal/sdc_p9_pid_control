@@ -47,3 +47,68 @@ void PID::UpdateParams() {
 double PID::TotalError() {
   return p_error*p_error;
 }
+
+double PID::SteeringAngle() {
+  return -Kp*p_error - Kd*d_error - Ki*i_error;
+}
+
+void PID::Twiddle() {
+  const int twiddle_start = 2;
+  double tolerance = 20;
+  iter++;
+  if(iter >= twiddle_start) {
+    if(iter == twiddle_start) {
+      // Initialize for best error
+      best_err = TotalError();
+      dp[0] = Kp;
+      dp[1] = Ki;
+      dp[2] = Kd;
+    } else {
+      if(ping_pong) {
+        ping_pong = 1;
+        for(int i=0; i < 3; i++) {
+          p[i] += dp[i];
+        }
+  
+        err += TotalError()/iter;
+        cout << "Err = " << err << " best_err = " << best_err << endl;
+        if(err < best_err) {
+          best_err = err;
+          for(int i=0; i < 3; i++) {
+            dp[i] *= 1.1;
+          }
+        } else {
+          for(int i=0; i < 3; i++) {
+            p[i] -= 2 * dp[i];
+          }
+          ping_pong = 0;
+        }
+      } else {
+        ping_pong = 1;
+        err += TotalError()/iter;
+        cout << "Err = " << err << " best_err = " << best_err << endl;
+        if(err < best_err) {
+          best_err = err;
+          for(int i=0; i < 3; i++) {
+            dp[i] *= 1.1;
+          }
+        } else {
+          for(int i=0; i < 3; i++) {
+            p[i] += dp[i];
+            dp[i] *= 0.9;
+          }
+        }
+      }
+      for(int i=0; i < 3; i++) {
+        sumdp += dp[i];
+      }
+      // Update Kp, Ki, Kd with new values
+      if(sumdp > tolerance) {
+        UpdateParams();
+        sumdp = 0;
+      } else {
+        cout <<"sumdp = " << sumdp << endl;
+      }
+    }
+  }
+}
