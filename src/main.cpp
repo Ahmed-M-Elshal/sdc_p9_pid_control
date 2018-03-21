@@ -33,7 +33,8 @@ int main()
   uWS::Hub h;
 
   PID pid;
-  pid.Init(0.20,0.0012,0.8);
+  pid.Init(0.18,0.0012,0.8);
+  //pid.Init(0.20,0.0012,0.8);
   //pid.Init(0.25,0.0012,0.8);
 	//pid.Init(0.208724, 0.00166979, 0.667917);
   //pid.Init(0, 0, 0);
@@ -55,7 +56,8 @@ int main()
           double angle = std::stod(j[1]["steering_angle"].get<std::string>());
           double steer_value;
 					const int twiddle_start = 2;
-					double tolerance = 21;
+					double tolerance = 20;
+					//double tolerance = 21;
           /*
           * Calcuate steering value here, remember the steering value is
           * [-1, 1].
